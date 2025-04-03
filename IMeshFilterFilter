@@ -1,0 +1,9 @@
+using UnityEngine;
+
+namespace OBJ_Exporter
+{
+	public interface IMeshFilterFilter
+	{
+		bool ShouldInclude(MeshFilter filter);
+	}
+}

@@ -10,7 +10,7 @@ namespace OBJ_Exporter
 		[ContextMenu("Export As OBJ")]
 		public void ExportOBJ()
 		{
-			var manager = new OBJ_ExporterManager(new IgnoreOutlineMaterialFilter(), new ObjMeshExporter());
+			var manager = new OBJ_ExporterManager(new IgnoreOutlineMaterialFilter(), new OBJ_MeshExporter());
 
 			string filePath = Path.Combine(Application.dataPath, "ExportedModel.obj");
 			manager.Export(rootObject, filePath, "MyExportedMesh");

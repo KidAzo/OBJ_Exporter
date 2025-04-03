@@ -1,0 +1,10 @@
+using System.Collections.Generic;
+using UnityEngine;
+
+namespace OBJ_Exporter
+{
+	public interface IMeshExporter
+	{
+		void Export(IEnumerable<MeshFilter> meshFilters, string filePath, string exportName);
+	}
+}

@@ -1,0 +1,37 @@
+using System.Collections.Generic;
+using UnityEngine;
+
+namespace OBJ_Exporter
+{
+	public class OBJ_ExporterManager
+	{
+		private readonly IMeshFilterFilter _filter;
+		private readonly IMeshExporter _exporter;
+
+		public OBJ_ExporterManager(IMeshFilterFilter filter, IMeshExporter exporter)
+		{
+			_filter = filter;
+			_exporter = exporter;
+		}
+
+		public void Export(GameObject root, string filePath, string exportName)
+		{
+			List<MeshFilter> toExport = new List<MeshFilter>();
+			var allFilters = root.GetComponentsInChildren<MeshFilter>();
+
+			foreach (var filter in allFilters)
+			{
+				if (_filter.ShouldInclude(filter))
+					toExport.Add(filter);
+			}
+
+			if (toExport.Count == 0)
+			{
+				Debug.LogWarning("No eligible mesh found to export.");
+				return;
+			}
+
+			_exporter.Export(toExport, filePath, exportName);
+		}
+	}
+}

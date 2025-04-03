@@ -1,0 +1,65 @@
+using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
+using UnityEngine;
+
+namespace OBJ_Exporter
+{
+	public class ObjMeshExporter : IMeshExporter
+	{
+		public void Export(IEnumerable<MeshFilter> meshFilters, string filePath, string exportName)
+		{
+			using (StreamWriter writer = new StreamWriter(filePath))
+			{
+				int vertexOffset = 0;
+				writer.WriteLine($"o {exportName}");
+
+				foreach (var mf in meshFilters)
+				{
+					Mesh mesh = mf.sharedMesh;
+					Transform t = mf.transform;
+
+					string objectName = $"{t.gameObject.name}_{t.GetInstanceID()}";
+					writer.WriteLine($"g {objectName}");
+
+					foreach (Vector3 v in mesh.vertices)
+					{
+						Vector3 worldV = t.TransformPoint(v);
+						writer.WriteLine($"v {worldV.x.ToString("F6", CultureInfo.InvariantCulture)} " +
+										 $"{worldV.y.ToString("F6", CultureInfo.InvariantCulture)} " +
+										 $"{worldV.z.ToString("F6", CultureInfo.InvariantCulture)}");
+					}
+
+					foreach (Vector3 n in mesh.normals)
+					{
+						Vector3 worldN = t.TransformDirection(n).normalized;
+						writer.WriteLine($"vn {worldN.x.ToString("F6", CultureInfo.InvariantCulture)} " +
+										 $"{worldN.y.ToString("F6", CultureInfo.InvariantCulture)} " +
+										 $"{worldN.z.ToString("F6", CultureInfo.InvariantCulture)}");
+					}
+
+					WriteTriangles(mesh, writer, vertexOffset);
+					vertexOffset += mesh.vertexCount;
+				}
+			}
+
+			Debug.Log($"OBJ Export process has been finished: {filePath}");
+		}
+
+		private void WriteTriangles(Mesh mesh, StreamWriter writer, int vertexOffset)
+		{
+			for (int subMesh = 0; subMesh < mesh.subMeshCount; subMesh++)
+			{
+				var triangles = mesh.GetTriangles(subMesh);
+				if (triangles.Length == 0) continue;
+
+				for (int i = 0; i < triangles.Length; i += 3)
+				{
+					writer.WriteLine($"f {triangles[i] + 1 + vertexOffset}//{triangles[i] + 1 + vertexOffset} " +
+									 $"{triangles[i + 1] + 1 + vertexOffset}//{triangles[i + 1] + 1 + vertexOffset} " +
+									 $"{triangles[i + 2] + 1 + vertexOffset}//{triangles[i + 2] + 1 + vertexOffset}");
+				}
+			}
+		}
+	}
+}

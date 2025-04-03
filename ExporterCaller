@@ -1,0 +1,19 @@
+using System.IO;
+using UnityEngine;
+
+namespace OBJ_Exporter
+{
+	public class ExporterCaller : MonoBehaviour
+	{
+		[SerializeField] private GameObject rootObject;
+
+		[ContextMenu("Export As OBJ")]
+		public void ExportOBJ()
+		{
+			var manager = new OBJ_ExporterManager(new IgnoreOutlineMaterialFilter(), new ObjMeshExporter());
+
+			string filePath = Path.Combine(Application.dataPath, "ExportedModel.obj");
+			manager.Export(rootObject, filePath, "MyExportedMesh");
+		}
+	}
+}

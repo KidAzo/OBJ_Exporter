@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace OBJ_Exporter
 {
-	public class ObjMeshExporter : IMeshExporter
+	public class OBJ_MeshExporter : IMeshExporter
 	{
 		public void Export(IEnumerable<MeshFilter> meshFilters, string filePath, string exportName)
 		{
